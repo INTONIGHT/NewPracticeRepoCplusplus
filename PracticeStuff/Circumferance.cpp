@@ -16,5 +16,26 @@ int main(){
     //how to call something from a diferent namespace
     std::cout << first::radius << " cm\n";
     std::cout << otherRadius << " cm\n";
+    //typedef alias for something
+    //arithmetatic operators
+    int students = 20;
+    students += 1;
+    students ++; 
+    students *=2;
+    //if you divide by 3 it will truncate the variable
+    students /=2;
+    int remainder = students % 3;
+    std::cout << remainder << "\n";
+    //type conversion
+    //implicit and then explicit
+    int dummy = 3.14;
+    std:: cout << dummy << "\n";
+    //this will explicitly cast it
+    std::cout << (char) 100 << "\n";
+    int correct = 8;
+    int questions = 10;
+    double score = correct/questions * 100;
+    //need to    double score = correct/(double)questions * 100; to get the real answer
+    std::cout << score;
     return 0;
 }
