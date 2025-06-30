@@ -1,0 +1,10 @@
+[
+    {
+        "userId":1,
+        "username":"testUser",
+        "firstName":"test",
+        "lastName":"user",
+        "password":"pwd",
+        "credits":51
+    }
+]
