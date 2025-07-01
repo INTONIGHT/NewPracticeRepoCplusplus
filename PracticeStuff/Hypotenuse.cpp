@@ -7,10 +7,10 @@ int main(){
     std::cin >> a;
     std::cout << "enter side b: ";
     std::cin >> b;
-    a = pow( a,2);
+    a = pow(a,2);
     b = pow(b,2);
     c = sqrt(a + b);
-    std::cout << "side C: " << c;3
+    std::cout << "side C: " << c ;
     
     return 0;
 }
