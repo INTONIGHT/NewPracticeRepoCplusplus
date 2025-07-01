@@ -3,11 +3,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import com.sideideas.slotmachine.User;
 
+import com.sideideas.slotmachine.InsufficientFundsException;
+
 import java.util.Scanner;
 
 public class SlotMachineGame {
     int userId = 0;
-    public void startGame(){
+    public void startGame() throws InsufficientFundsException{
         System.out.println("please provide username: ");
         Scanner myObj = new Scanner(System.in);
         String username = myObj.nextLine();
@@ -27,10 +29,9 @@ public class SlotMachineGame {
             this.startGame();
         } 
     }
-    public void menuOptions(){
+    public void menuOptions() throws InsufficientFundsException,IOException{
             User u = new User();
             u.getUser(this.userId);
-            double credits = u.getCredits();
             System.out.println("Type 1 to play the game, 2 to deposit, 3 to withdraw, 4 to logout");
              Scanner myObj = new Scanner(System.in);
             int choice = myObj.nextInt();
@@ -38,22 +39,23 @@ public class SlotMachineGame {
                 //this will handle running the machine and then validating results
                 case 1:
                this.runGame(u);
-                        //should start the user back at the main menu
-                     
                 //this will handle depositing credits then letting them go to the main menu
                 case 2:
+                this.depositCredits(u);
                 //this will handle withdrawls
                 case 3:
+                this.withdrawCredits(u);
                 //this will handle logout
                 case 4:
+                myObj.close();
                 System.exit(0);
 
             }
     }
     //to handle the slot machine options seperately
-    public void runGame(User u){
-         double credits = u.getCredits();
-                System.out.println("youre about to bet 3 credits on one game you currently have: " + credits + " credits");
+    public void runGame(User u) throws InsufficientFundsException,IOException{
+                double credits = u.getCredits();
+                System.out.println("Youre about to bet 3 credits on one game you currently have: " + credits + " credits");
                 System.out.println("\n Would you like to play? press 1 to play 2 to return to the main menu");
                 Scanner myObj = new Scanner(System.in);
                 int subChoice = myObj.nextInt();
@@ -67,16 +69,19 @@ public class SlotMachineGame {
                             if(winnings > 0){
                                 System.out.println("Congratulations you won: " + winnings);
                                 u.depositCredits(winnings, this.userId);
+                            }else{
+                                System.out.println("Sorry you lost better luck next time");
                             }
+                           this.runGame(u);
                         } catch(InsufficientFundsException ex){
-                            System.out.println("sorry you must deposit more money returning you to the main menu");
+                            System.out.println("sorry you must deposit more money, returning you to the main menu");
                             this.menuOptions();
                         }
                         
                         case 2:
                         this.menuOptions();
                     }
-
+                    myObj.close();
     }
     public ArrayList<String> runSlotMachine(){
         ArrayList<String> results = new ArrayList<>();
@@ -156,5 +161,41 @@ public class SlotMachineGame {
         
         //if they lost
         return 0;
+    }
+    public void depositCredits(User u) throws InsufficientFundsException,IOException{
+        int userId = u.getUserId();
+        System.out.println("type the amount to deposit, the amount must be greater than 0");
+        Scanner myObj = new Scanner(System.in);
+        double amt = myObj.nextInt();
+        if(amt <= 0){
+            System.out.println("please input a valid amount");
+            this.depositCredits(u);
+        }
+        u.depositCredits(amt, userId);
+        System.out.println("Thank you for your deposit returning you to the main menu");
+        this.menuOptions();
+        myObj.close();
+    }
+    public void withdrawCredits(User u) throws InsufficientFundsException,IOException{
+        int userId = u.getUserId();
+        double credits = u.getCredits();
+        System.out.println("You currently have: " + credits + " credits");
+        System.out.println("\n type the amount to withdraw, the amount must be greater than 0 and less than your current balance");
+        Scanner myObj = new Scanner(System.in);
+        double amt = myObj.nextInt();
+        if(amt <= 0){
+            System.out.println("please input a valid amount");
+            this.withdrawCredits(u);
+        }
+        if(amt > credits){
+             myObj.close();
+            throw new InsufficientFundsException("You dont have that much");
+            
+           
+        }
+        u.withdrawCredits(amt, userId);
+        System.out.println("Thank you for your withdrawl returning you to the main menu");
+        this.menuOptions();
+        myObj.close();
     }
 }

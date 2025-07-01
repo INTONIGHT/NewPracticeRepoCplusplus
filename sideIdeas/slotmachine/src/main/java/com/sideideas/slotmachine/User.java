@@ -85,13 +85,20 @@ public class User {
     
    }
     
-    public void depositCredits(double amount,int userId){
+    public void depositCredits(double amount,int userId) throws InsufficientFundsException, IOException{
+        if (amount < 0){
+            throw new InsufficientFundsException("Amount must be grewater than 0");
+        }
         User u = this.getUser(userId);
         double currentCredits = this.getCredits();
         double depositAmt = currentCredits + amount;
         u.setCredits(depositAmt);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonNode = objectMapper.createObjectNode();
+        jsonNode.put("credits", depositAmt);
+        objectMapper.writeValue(new File("user.json"), jsonNode);
     }
-    public void withdrawCredits(double amount, int userId) throws InsufficientFundsException{
+    public void withdrawCredits(double amount, int userId) throws InsufficientFundsException,IOException{
         User u = this.getUser(userId);
         double currentCredits = this.getCredits();
         if(amount >currentCredits){
@@ -100,6 +107,10 @@ public class User {
         double withdrawAmt = currentCredits - amount;
         
         u.setCredits(withdrawAmt);
+        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectNode jsonNode = objectMapper.createObjectNode();
+        jsonNode.put("credits", withdrawAmt);
+        objectMapper.writeValue(new File("user.json"), jsonNode);
     }
     public void loginUser(String username, String password) throws InvalidUserException,IOException{
         ObjectMapper objectMapper = new ObjectMapper();
